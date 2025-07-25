@@ -8,7 +8,13 @@ var snowdrop = {
     dodge: .05,
     effects: [0, 0, 0],
 
-
+    move1: {
+        name: '',
+        desc: '',
+        function: function() {
+            console.log('hi');
+        }
+    }
 };
 
 var snowbell = {
@@ -32,8 +38,8 @@ function toggle(mode) {
     // Mode 0: menu -> text
     // Mode 1: text -> menu
 
-    let next = document.getElementById('next');
-    let side = document.getElementById('side-text');
+    const next = document.getElementById('next');
+    const side = document.getElementById('side-text');
 
     if (!mode) {
         //next.style.display = 'block';
@@ -86,6 +92,9 @@ function animateCount(element, change) {
 
 
 function reset() {
+
+    noise();
+
     let textbox = document.getElementById('textbox');
     let menu = `<span class='textbox-item' onclick='haggle()'>Haggle</span>
         <span class='textbox-item' onclick='test(0)'>Skill</span>
@@ -131,52 +140,22 @@ function haggle() {
         dmg = Math.floor(dmg * 1.5);
     }
 
-    let priceEffect = price(dmg);
+    let priceDmg = price(dmg);
 
     merchant.morale -= dmg;
-    merchant.price -= priceEffect;
+    merchant.price -= priceDmg;
 
     if (merchant.morale < 0) merchant.morale = 0;
     if (merchant.price < merchant.minPrice) merchant.price = merchant.minPrice;
 
     animateCount('morale', dmg * -1);
-    animateCount('price', priceEffect * -1);
+    animateCount('price', priceDmg * -1);
 
 
-    let str = `${active.name} used Haggle.\nLulu's morale received ${dmg} damage. The price fell by ${priceEffect}.`;
+    let str = `${active.name} used Haggle.\nLulu's morale received ${dmg} damage. The price fell by ${priceDmg}.`;
     typeText(str);
 }
 
-function typeText(str, i = 0) {
-
-    let speed = 30;
-    let textbox = document.getElementById('textbox');
-
-    let c = str.charAt(i);
-
-    // Parse line breaks
-    if (c === '\n') {
-        textbox.innerHTML += '<br>';
-
-    // Longer pause after sentence
-    } else if (c === '.') {
-        speed = 120;
-    }
-
-    textbox.innerHTML += str.charAt(i);
 
 
-    if (i < str.length) {
 
-        setTimeout(() => ( typeText(str, i + 1) ), speed);
-    } else {
-        let next = document.getElementById('next');
-        next.style.display = 'block';
-    }
-
-    return;
-}
-
-function randomNum(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
