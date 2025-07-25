@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <meta name='viewport' content='width=1280px, initial-scale=1.0'>
+        <meta charset='UTF-8'>
+
+        <title></title>
+
+        <!-- css -->
+        <link href='market.css' rel='stylesheet' type='text/css' media='all'>
+
+        <!-- scripts -->
+        <script src='./js/battle.js'></script>
+        <script src='./js/merchants.js'></script>
+
+        <!-- favicon -->
+        <link rel='icon' type='image/x-icon' href=''>
+
+    </head>
+
+    <body>
+    <div id='screen'>
+
+        <!-- status (upper left) -->
+        <div id='status'>
+
+            <div id='time'></div>
+            <div id='time-label'>
+                <span id='current-time'>1</span>
+                <br>&nbsp;&nbsp;&nbsp;/6
+            </div>
+
+            <div id='money-label'>⨷
+                <span id="money" style="font-weight:700">190</span>
+            </div>
+
+        </div>
+
+
+        <!-- battle stuff -->
+        <!-- merchant stats -->
+        <div id='merchant-stats'>
+
+            <h1 id='name'></h1>
+
+            <div class='line'>
+                <h2>Morale</h2><span id='morale'></span>
+            </div>
+            <div class='line'>
+                <h2>Current price</h2><span id='price'></span>
+            </div>
+
+            <hr>
+
+            <h3>turn</h3>
+
+            <div id='merchant-stats-item'></div>
+        </div>
+
+        <div id='side-text'>Select a command.</div>
+
+
+        <!-- textbox -->
+        <div id='textbox'>
+            <span class='textbox-item' onclick='haggle()'>Haggle</span>
+            <span class='textbox-item'>Skill</span>
+            <span class='textbox-item'>Defend</span>
+            <span class='textbox-item'>Item</span>
+            <span class='textbox-item'>End</span>
+        </div>
+
+        <div id='next' onclick='reset()'></div>
+
+        <!--display -->
+        <div id='stand'></div>
+        <div id='merchant'></div>
+
+
+    </div>
+    </body>
+
+</html>

@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+* { box-sizing: border-box; }
+
+:root {
+    --a: #883327;
+    --b: #bd7a66;
+    --c: #ebc5b9;
+    --bg: #ffebd6;
+}
+
+
+
+/* Format defaults */
+body {
+
+
+    font-size: 20px;
+    font-family: "Source Sans 3";
+    color: var(--a);
+
+    cursor: url(img/cursor/default.png), default;
+
+    background-color: var(--c);
+    border: 1px solid var(--c);
+}
+
+h1 {
+    font-size: 30px;
+    margin: 0px;
+}
+
+h2 {
+    font-size: 18px;
+    text-transform: uppercase;
+    margin: -10px 0px;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+    display: inline;
+}
+
+hr {
+    height: 0px;
+    border-top: 1px solid var(--a);
+    margin: 5px 0px;
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 23px;
+}
+
+
+/* Screen */
+#screen {
+    width: 1000px;
+    height: 600px;
+
+    position: relative;
+    margin: 50px auto;
+
+    background-color: var(--bg);
+
+    border: 3px solid var(--a);
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+/* Status */
+#status {
+    width: 145px;
+    height: 145px;
+
+    position: absolute;
+    top: 20px;
+    left: 25px;
+
+    border-radius: 100px;
+    border: 2px solid var(--b);
+}
+
+#time {
+    width: 130px;
+    height: 130px;
+
+    position: relative;
+    top: 5px;
+    margin: auto;
+
+    background-image: url(img/temp.png);
+    background-size: contain;
+}
+
+#current-time {
+    line-height: 0.35;
+    margin-right: 20px;
+}
+
+#time-label {
+    width: 65px;
+    height: 50px;
+
+    position: absolute;
+    top: 115px;
+    left: 85px;
+
+    background-color: white;
+    text-align: center;
+    line-height: 0.5;
+    font-size: 25px;
+    font-weight: 1000;
+    letter-spacing: -1px;
+
+    transform: rotate(10deg);
+    z-index: 3;
+
+    padding-top: 10px;
+    border: 2px solid var(--b);
+}
+
+#money-label {
+    width: 95px;
+    height: 35px;
+
+    position: absolute;
+    top: 135px;
+
+    background-color: white;
+
+    text-align: right;
+    line-height: 0.5;
+    font-size: 22px;
+    font-weight: 100;
+
+    transform: rotate(-3deg);
+
+    z-index: 2;
+
+    padding: 10px 15px 10px 10px;
+    border: 2px solid var(--b);
+}
+
+
+
+/* Merchant stats */
+#merchant-stats {
+    width: 250px;
+    height: 160px;
+
+    position: absolute;
+    top: 30px;
+    right: 35px;
+
+    background-color: white;
+
+    padding: 10px 15px;
+    border: 2px solid var(--b);
+}
+
+#merchant-stats-item {
+    width: 125px;
+    height: 125px;
+
+    position: absolute;
+    top: 95px;
+    left: 145px;
+
+    background: url(img/items.png) 0px 0px / cover;
+}
+
+#side-text {
+    position: absolute;
+    bottom: 130px;
+    left: 40px;
+
+    line-height: 1.15;
+    font-style: italic;
+}
+
+#textbox {
+    width: 100%;
+    height: 125px;
+
+    position: absolute;
+    bottom: 0px;
+
+    background-color: white;
+    font-size: 22px;
+    line-height: 1.25;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0px 100px;
+}
+
+.textbox-item {
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.textbox-item:hover {
+    background-color: var(--c);
+    cursor: url(img/cursor/pointer.png), pointer;
+}
+
+#next {
+    position: absolute;
+    bottom: 20px;
+    right: 50px;
+
+    font-size: 30px;
+
+    display: none;
+}
+
+#next::after {
+    content: "▼";
+}
+
+#next:hover {
+    color: var(--b);
+    cursor: url(img/cursor/pointer.png), pointer;
+}
+
+
+
+/* Display */
+#stand {
+    width: 350px;
+    height: 275px;
+
+    position: absolute;
+    top: 75px;
+    left: 375px;
+
+    filter: grayscale(0.5);
+    opacity: 0.3;
+
+    background-image: url(img/vegetable-stand.png);
+    background-size: contain;
+}
+
+#merchant {
+    width: 250px;
+    height: 250px;
+
+    position: absolute;
+    top: 150px;
+    left: 280px;
+
+    background: url(img/merchants.png) 0px 0px / cover;
+}
+
+
+
+
