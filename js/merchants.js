@@ -14,10 +14,17 @@ var lulu = {
 var merchant = lulu;
 
 // Move to opening battle window later
-window.onload = function() {
+
+document.addEventListener('DOMContentLoaded', function() {
+    const display = document.createElement('div');
+    display.id = 'merchant';
+    display.style.position = 'absolute';
+    document.getElementById('display').append(display);
+
+
     document.getElementById('name').innerHTML = merchant.name;
     document.getElementById('morale').innerHTML = merchant.morale;
     document.getElementById('price').innerHTML = merchant.price;
     let i = 1;
     merchant['move' + i]();
-}
+});
