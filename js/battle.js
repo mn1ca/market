@@ -187,7 +187,7 @@ function updateDmg(dmg, price, move) {
     }
 
     merchant.morale -= dmg;
-    const priceDmg = (price) ?
+    let priceDmg = (price) ?
           Math.floor(Math.sqrt(dmg) + Math.abs(Math.sin(dmg) * dmg / 20)) : 0;
 
 
