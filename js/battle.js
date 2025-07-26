@@ -1,16 +1,16 @@
 
 var snowdrop = {
     name: 'Snowdrop',
-    morale: 90,
+    morale: 120,
     scale: 0.25,
     sp: 5,
     crit: 0.15,
-    acc: .90,
-    dodge: .05,
+    acc: 0.9,
+    dodge: 0.05,
     effects: [0, 0, 0],
 
     move0: {
-        name: 'Honed Voice',
+        name: 'Tongue Twister',
         desc: 'Increases morale. Decrease accuracy and chance of being unaffected.',
         cost: 2,
         use: function() {
@@ -23,10 +23,14 @@ var snowdrop = {
                 return;
             }
 
+            toggle(0);
+
             active.sp -= this.cost;
             active.morale += randomNum(10, 30);
-            active.acc *= .9;
-            active.dodge *= .9;
+
+            // Reduce accuracy and dodge
+            active.acc *= 0.9;
+            active.dodge *= 0.9;
 
             typeText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and unaffected rate fell.`);
 
@@ -36,16 +40,42 @@ var snowdrop = {
     move1: {
         name: 'Pointed Jab',
         desc: 'Sharply decrease target morale without affecting price.',
-        cost: 2,
+        cost: 3,
         use: function() {
-            console.log('hello');
+
+            const textbox = document.getElementById('textbox');
+            textbox.innerHTML = '';
+
+            if (active.sp < this.cost) {
+                skill(1);
+                return;
+            }
+
+            toggle(0);
+
+            active.sp -= this.cost;
+
+            // Missed
+            if ( Math.random() > active.acc + 0.025 ) {
+                updateDmg(0, false, this.name);
+                return;
+            }
+
+            let dmg = 0.9 * active.morale;
+            const variance = randomNum(0, 5);
+
+            dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
+            updateDmg(dmg, false, this.name);
+
+            return;
+
         }
     },
 
     move2: {
-        name: 'Stunning Remark',
-        desc: 'Use all SP to silence target.<br>Chance of effect scales with consumed SP.',
-        cost: 0,
+        name: 'Riposte',
+        desc: 'A strong attack that also increases chance of critical damage.',
+        cost: 3,
         use: function() {
             console.log('hey');
         }
@@ -58,11 +88,32 @@ var snowbell = {
     scale: 0.1,
     sp: 5,
     atk: 5,
-    def: 4,
     crit: 0.2,
     acc: .75,
     dodge: .02,
     effects: [0, 0, 0],
+
+    move0: {
+        name: 'Psych-Up!',
+        desc: 'Increase party morale.',
+        cost: 3,
+        use: function() {
+            console.log('hey');
+        }
+    },
+
+    move1: {
+
+    },
+
+    move2: {
+        name: 'Stunning Remark',
+        desc: 'Use all available SP to silence target.<br>Chance of effect scales with consumed SP.',
+        cost: 0,
+        use: function() {
+            console.log('hey');
+        }
+    }
 };
 
 var active = snowdrop;
@@ -106,6 +157,8 @@ function nextHandler() {
 
     return;
 }
+
+
 function menu() {
 
     noise();
@@ -125,9 +178,40 @@ function menu() {
 
 }
 
-function price(dmg) {
-    return Math.floor(Math.sqrt(dmg) + Math.abs(Math.sin(dmg) * dmg / 20));
+function updateDmg(dmg, price, move) {
+
+    if (!dmg) {
+        const str = `${active.name} used ${move}.\nHowever, ${merchant.name} was unaffected.`;
+        typeText(str);
+        return;
+    }
+
+    merchant.morale -= dmg;
+    const priceDmg = (price) ?
+          Math.floor(Math.sqrt(dmg) + Math.abs(Math.sin(dmg) * dmg / 20)) : 0;
+
+
+    if (merchant.morale < 0) merchant.morale = 0;
+
+    if (merchant.price - priceDmg < merchant.minPrice) {
+        priceDmg = merchant.price - merchant.minPrice;
+        merchant.price = merchant.minPrice;
+    } else {
+        merchant.price -= priceDmg;
+    }
+
+    animateCount('morale', dmg * -1);
+    animateCount('price', priceDmg * -1);
+
+    let str = `${active.name} used ${move}.\n${merchant.name}'s morale received ${dmg} damage.`
+    if (priceDmg)
+        str += ` The price fell by ${priceDmg} ⨷.`;
+    typeText(str);
+
+    animateDmg();
+
 }
+
 
 function haggle() {
 
@@ -139,46 +223,21 @@ function haggle() {
     // Missed
     if ( Math.random() > active.acc ) {
 
-        let str = `${active.name} used Haggle.\nHowever, ${merchant.name} was unaffected.`;
-        typeText(str);
-
+        updateDmg(0, true, `Haggle`);
         return;
     }
 
     let dmg = Math.floor(active.morale * active.scale);
     const variance = randomNum(0, 5);
 
-    if (Math.random() < .5 && dmg > 15)
-        dmg -= variance;
-    else
-        dmg += variance;
+    dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
 
     // Crit
     if (Math.random < active.crit) {
         dmg = Math.floor(dmg * 1.5);
     }
 
-    let priceDmg = price(dmg);
-
-    merchant.morale -= dmg;
-
-
-    if (merchant.morale < 0) merchant.morale = 0;
-    if (merchant.price - priceDmg < merchant.minPrice) {
-        priceDmg = merchant.price - merchant.minPrice;
-        merchant.price = merchant.minPrice;
-    } else {
-        merchant.price -= priceDmg;
-    }
-
-    animateCount('morale', dmg * -1);
-    animateCount('price', priceDmg * -1);
-
-
-    let str = `${active.name} used Haggle.\nLulu's morale received ${dmg} damage. The price fell by ${priceDmg} ⨷.`;
-    typeText(str);
-
-    animateDmg();
+    updateDmg(dmg, true, `Haggle`);
 
 
     return;

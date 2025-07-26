@@ -12,12 +12,15 @@ function typeText(str, i = 0) {
     if (c === '\n') {
         textbox.innerHTML += '<br>';
 
+    } else if (c === `'`) {
+        c = `’`;
+
     // Longer pause after sentence
     } else if (c === '.') {
         speed = 120;
     }
 
-    textbox.innerHTML += str.charAt(i);
+    textbox.innerHTML += c;
 
     // Play audio every 8th character
     const audio = new Audio('./audio/type.mp3');
