@@ -11,7 +11,7 @@ var snowdrop = {
 
     move0: {
         name: 'Tongue Twister',
-        desc: 'Increases morale. Decrease accuracy and chance of being unaffected.',
+        desc: 'Increases morale. Decrease accuracy and chance of landing attacks.',
         cost: 2,
         use: function() {
 
@@ -32,7 +32,7 @@ var snowdrop = {
             active.acc *= 0.9;
             active.dodge *= 0.9;
 
-            typeText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and unaffected rate fell.`);
+            typeText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and landing rate fell.`);
 
         }
     },
@@ -74,10 +74,32 @@ var snowdrop = {
 
     move2: {
         name: 'Riposte',
-        desc: 'A strong attack that also increases chance of critical damage.',
+        desc: 'An attack that increases chance of critical damage. It will always land.',
         cost: 3,
         use: function() {
-            console.log('hey');
+
+            const textbox = document.getElementById('textbox');
+            textbox.innerHTML = '';
+
+            if (active.sp < this.cost) {
+                skill(2);
+                return;
+            }
+
+            toggle(0);
+
+            active.sp -= this.cost;
+
+            active.crit += 0.05;
+
+            let dmg = active.scale * active.morale;
+            const variance = randomNum(0, 5);
+
+            dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
+            updateDmg(dmg, true, this.name);
+
+            return;
+
         }
     }
 };
@@ -103,6 +125,12 @@ var snowbell = {
     },
 
     move1: {
+        name: 'Sowing Doubt',
+        desc: 'Slightly drain opponent morale once per turn.',
+        cost: 3,
+        use: function() {
+            console.log('hey');
+        }
 
     },
 
@@ -186,6 +214,14 @@ function updateDmg(dmg, price, move) {
         return;
     }
 
+    let crit = '';
+    console.log(active)
+    // Crit
+    if (Math.random() < active.crit) {
+        dmg = Math.floor(dmg * 1.5);
+        crit = 'critical';
+    }
+
     merchant.morale -= dmg;
     let priceDmg = (price) ?
           Math.floor(Math.sqrt(dmg) + Math.abs(Math.sin(dmg) * dmg / 20)) : 0;
@@ -203,7 +239,7 @@ function updateDmg(dmg, price, move) {
     animateCount('morale', dmg * -1);
     animateCount('price', priceDmg * -1);
 
-    let str = `${active.name} used ${move}.\n${merchant.name}'s morale received ${dmg} damage.`
+    let str = `${active.name} used ${move}.\n${merchant.name}'s morale received ${dmg} ${crit} damage.`
     if (priceDmg)
         str += ` The price fell by ${priceDmg} ⨷.`;
     typeText(str);
@@ -231,11 +267,6 @@ function haggle() {
     const variance = randomNum(0, 5);
 
     dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
-
-    // Crit
-    if (Math.random < active.crit) {
-        dmg = Math.floor(dmg * 1.5);
-    }
 
     updateDmg(dmg, true, `Haggle`);
 

@@ -25,6 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('name').innerHTML = merchant.name;
     document.getElementById('morale').innerHTML = merchant.morale;
     document.getElementById('price').innerHTML = merchant.price;
+
+    document.getElementById('snowdrop-morale').innerHTML = snowdrop.morale;
+    document.getElementById('snowdrop-sp').innerHTML = snowdrop.sp;
+
+    document.getElementById('snowbell-morale').innerHTML = snowbell.morale;
+    document.getElementById('snowbell-sp').innerHTML = snowbell.sp;
+
     let i = 1;
     merchant['move' + i]();
 });
