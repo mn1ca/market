@@ -234,27 +234,30 @@ hr {
 }
 
 .tooltip span {
+
+    width: 175px;
+
     position: absolute;
-
-    display: none;
-
-    /* customizable */
-    transition: all 0.15s ease;
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 1px var(--c);
-    width: 200px;
+    margin-top: -85px;
+    margin-left: 10px;
 
     background-color: white;
 
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.2;
+
+    transition: all 0.15s ease;
+
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px var(--c);
+
+    display: none;
     pointer-events: none;
 }
 
 .tooltip:hover span {
     display: block;
-
-
 }
 
 .snowbell-img {

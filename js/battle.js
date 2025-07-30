@@ -214,9 +214,9 @@ function nextHandler() {
             active.effects[i]--;
 
             if (!active.effects[i])
-                document.getElementById(`effect-${i}`).remove();
+                document.getElementById(`${active.name}-effect-${i}`).remove();
             else
-                document.getElementById(`turns-${i}`).innerHTML = active.effects[i];
+                document.getElementById(`${active.name}-turns-${i}`).innerHTML = active.effects[i];
         }
     }
 
@@ -266,14 +266,14 @@ function addStatusEffect(i, turns, character = active) {
     character.effects[i] = turns;
     const current = statusEffects[i];
 
-    const str = `<b>${current.name}:</b><br>${current.desc}<hr><h3>Turns left: <h3 id='turns-${i}'>${character.effects[i]}</h3></h3> `;
+    const str = `<b>${current.name}:</b><br>${current.desc}<hr><h3>Turns left: <h3 id='${active.name}-turns-${i}'>${character.effects[i]}</h3></h3> `;
 
     const element = document.createElement('div');
     element.classList.add('tooltip');
     element.innerHTML = `<span>${str}</span>`;
 
     const effect = document.createElement('div');
-    element.id = `effect-${i}`;
+    element.id = `${active.name}-effect-${i}`;
     effect.classList.add('status-effect');
     effect.style.background = current.bg;
     element.append(effect);
@@ -415,8 +415,8 @@ function skill(poor = 3) {
 function defend() {
 
     const pronoun = (active === snowdrop) ? 'her' : 'his';
-
     typeText(`${active.name} covered ${pronoun} ears.`);
+
     addStatusEffect(3, 1);
 
     return;
