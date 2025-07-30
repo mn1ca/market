@@ -46,6 +46,10 @@ h3 {
     display: inline;
 }
 
+h4 {
+    font-size: 50%;
+}
+
 hr {
     height: 0px;
     border-top: 1px solid var(--a);
@@ -156,7 +160,7 @@ hr {
     position: absolute;
     left: 60px;
 
-    padding: 22px 20px 50px 80px;
+    padding: 25px 20px 50px 80px;
 
     background-color: var(--bg);
     border: 2px solid var(--b);
@@ -210,21 +214,19 @@ hr {
     top: 350px;
 }
 
-.status-effects {
+.statuseffects {
     width: 112px;
     height: 25px;
 
     position: absolute;
-    top: 55px;
+    bottom: 6px;
 
-    display: inline-flex;
-
-
+    display: flex;
 }
 
-.status-effect {
-    width: 27px;
-    height: 25px;
+.statuseffect {
+    width: 25px;
+    height: 23px;
 
     display: flex;
     margin : 0px 1px;
@@ -238,7 +240,7 @@ hr {
     width: 175px;
 
     position: absolute;
-    margin-top: -85px;
+    margin-top: -90px;
     margin-left: 10px;
 
     background-color: white;
@@ -248,7 +250,7 @@ hr {
 
     transition: all 0.15s ease;
 
-    padding: 5px 10px;
+    padding: 10px;
     border-radius: 5px;
     box-shadow: 2px 2px 1px var(--c);
 
@@ -267,7 +269,7 @@ hr {
 /* Merchant stats */
 #merchant-stats {
     width: 250px;
-    height: 160px;
+    height: 145px;
 
     position: absolute;
     top: 30px;
@@ -276,7 +278,7 @@ hr {
     background-color: white;
     border: 2px solid var(--b);
 
-    padding: 10px 15px;
+    padding: 15px;
 
 }
 
@@ -286,9 +288,18 @@ hr {
 
     position: absolute;
     top: 95px;
-    right: -30px;
+    right: -25px;
 
     background: url(img/items.png) 0px 0px / cover;
+}
+
+#turn {
+    position: absolute;
+    top: 175px;
+    left: 715px;
+
+    font-size: 20px;
+
 }
 
 #side-text {

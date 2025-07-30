@@ -5,6 +5,7 @@ var lulu = {
     minPrice: 5,
     scale: 0.05,
     crit: 0.1,
+    effects: [0, 0, 0, 0],
 
     move1: function() {
         console.log('move');
@@ -28,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('morale').innerHTML = merchant.morale;
     document.getElementById('price').innerHTML = merchant.price;
 
+    document.getElementById('money').innerHTML = money;
 
-
-    let i = 1;
-    merchant['move' + i]();
+    //let i = 1;
+    //merchant['move' + i]();
 });
 
 function renderStats(character) {
@@ -48,7 +49,7 @@ function renderStats(character) {
             <div class='stats-img ${name}-img'></div>`;
 
     const statusEffects = document.createElement('div');
-    statusEffects.classList.add('status-effects');
+    statusEffects.classList.add('statuseffects');
     statusEffects.id = `${name}-statuseffects`;
     stats.append(statusEffects);
 
