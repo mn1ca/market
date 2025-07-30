@@ -7,7 +7,7 @@ var snowdrop = {
     crit: 0.15,
     acc: 0.9,
     dodge: 0.05,
-    effects: [0, 0, 0],
+    effects: [0, 0, 0, 0],
 
     move0: {
         name: 'Tongue Twister',
@@ -26,7 +26,11 @@ var snowdrop = {
             toggle(0);
 
             active.sp -= this.cost;
-            active.morale += randomNum(10, 30);
+            animateCount('Snowdrop-sp', -1 * this.cost);
+
+            const i = randomNum(10, 30)
+            active.morale += i;
+            animateCount('Snowdrop-morale', i);
 
             // Reduce accuracy and dodge
             active.acc *= 0.9;
@@ -74,7 +78,7 @@ var snowdrop = {
 
     move2: {
         name: 'Riposte',
-        desc: 'An attack that increases chance of critical damage. It will always land.',
+        desc: 'An attack that increases chance of critical damage.<br>It will always land.',
         cost: 3,
         use: function() {
 
@@ -96,7 +100,7 @@ var snowdrop = {
             const variance = randomNum(0, 5);
 
             dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
-            updateDmg(dmg, true, this.name);
+            updateDmg(dmg, true, this.name, 1);
 
             return;
 
@@ -113,6 +117,7 @@ var snowbell = {
     crit: 0.2,
     acc: .75,
     dodge: .02,
+    defend: false,
     effects: [0, 0, 0],
 
     move0: {
@@ -144,6 +149,31 @@ var snowbell = {
     }
 };
 
+
+var width = 27;
+var statusEffects = [
+    {
+        name: 'Silenced',
+        desc: 'Unable to use haggle or skills',
+        bg: `url(img/stati.png) 0 0 / cover`,
+    },
+    {
+        name: 'Unmotivated',
+        desc: 'Morale decreases slightly per turn',
+        bg: `url(img/stati.png) -${width}px 0 / cover`,
+    },
+    {
+        name: 'Rallying',
+        desc: 'Morale increases slightly per turn',
+        bg: `url(img/stati.png) ${width * 2}px 0 / cover`,
+    },
+    {
+        name: 'Defending',
+        desc: 'Takes reduced damage to morale',
+        bg: `url(img/stati.png) ${width}px 0 / cover`,
+    },
+]
+
 var active = snowdrop;
 var turns = 5;
 var test = toggle;
@@ -172,7 +202,24 @@ function toggle(mode) {
 function nextHandler() {
 
     //temporary for testing
+    console.log(document.getElementById(active.name));
+    document.getElementById(active.name).style.transform = 'scale(1)';
+
     active = (active === snowdrop) ? snowbell : snowdrop;
+    document.getElementById(active.name).style.transform = 'scale(1.1)';
+
+    // Clear out expired status effects
+    for (let i = 0; i < statusEffects.length; i++) {
+        if (active.effects[i]) {
+            active.effects[i]--;
+
+            if (!active.effects[i])
+                document.getElementById(`effect-${i}`).remove();
+            else
+                document.getElementById(`turns-${i}`).innerHTML = active.effects[i];
+        }
+    }
+
     menu();
 
     /*if (active === snowdrop) {
@@ -187,15 +234,16 @@ function nextHandler() {
 }
 
 
-function menu() {
+function menu(i = 1) {
 
-    noise();
+    if (i)
+        noise();
 
     const sideText = document.getElementById('side-text');
     const textbox = document.getElementById('textbox');
     const menu = `<span class='textbox-item' onclick='haggle()'>Haggle</span>
         <span class='textbox-item' onclick='skill()'>Skill</span>
-        <span class='textbox-item'>Defend</span>
+        <span class='textbox-item' onclick='defend()'>Defend</span>
         <span class='textbox-item'>Item</span>
         <span class='textbox-item'>End</span>`;
 
@@ -206,7 +254,36 @@ function menu() {
 
 }
 
-function updateDmg(dmg, price, move) {
+function addStatusEffect(i, turns, character = active) {
+
+    // If effect already exists, cap out and return
+    if (character.effects[i]) {
+        character.effects[i] = Math.max(character.effects[i], turns);
+        document.getElementById(`turns-${i}`).innerHTML = character.effects[i];
+        return;
+    }
+
+    character.effects[i] = turns;
+    const current = statusEffects[i];
+
+    const str = `<b>${current.name}:</b><br>${current.desc}<hr><h3>Turns left: <h3 id='turns-${i}'>${character.effects[i]}</h3></h3> `;
+
+    const element = document.createElement('div');
+    element.classList.add('tooltip');
+    element.innerHTML = `<span>${str}</span>`;
+
+    const effect = document.createElement('div');
+    element.id = `effect-${i}`;
+    effect.classList.add('status-effect');
+    effect.style.background = current.bg;
+    element.append(effect);
+
+    document.getElementById(`${character.name}-statuseffects`).append(element);
+
+    return;
+}
+
+function updateDmg(dmg, price, move, bonus = 0) {
 
     if (!dmg) {
         const str = `${active.name} used ${move}.\nHowever, ${merchant.name} was unaffected.`;
@@ -239,9 +316,15 @@ function updateDmg(dmg, price, move) {
     animateCount('morale', dmg * -1);
     animateCount('price', priceDmg * -1);
 
-    let str = `${active.name} used ${move}.\n${merchant.name}'s morale received ${dmg} ${crit} damage.`
+    let str = `${active.name} used ${move}.`
+    if (bonus)
+        str += ` ${active.name}'s critical rate increased.`;
+
+    str += `\n${merchant.name}'s morale received ${dmg} ${crit} damage.`
+
     if (priceDmg)
         str += ` The price fell by ${priceDmg} ⨷.`;
+
     typeText(str);
 
     animateDmg();
@@ -326,5 +409,16 @@ function skill(poor = 3) {
         textbox.appendChild(skill);
 
     }
+}
+
+
+function defend() {
+
+    const pronoun = (active === snowdrop) ? 'her' : 'his';
+
+    typeText(`${active.name} covered ${pronoun} ears.`);
+    addStatusEffect(3, 1);
+
+    return;
 }
 

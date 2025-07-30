@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 
 * { box-sizing: border-box; }
 
@@ -16,7 +19,7 @@ body {
 
 
     font-size: 20px;
-    font-family: "Source Sans 3";
+    font-family: "National Park";
     color: var(--a);
 
     cursor: url(img/cursor/default.png), default;
@@ -31,7 +34,7 @@ h1 {
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 16px;
     text-transform: uppercase;
     margin: -10px 0px;
 }
@@ -125,7 +128,7 @@ hr {
 }
 
 #money-label {
-    width: 95px;
+    width: 100px;
     height: 35px;
 
     position: absolute;
@@ -134,7 +137,7 @@ hr {
     background-color: white;
 
     text-align: right;
-    line-height: 0.5;
+    line-height: 1;
     font-size: 22px;
     font-weight: 100;
 
@@ -142,21 +145,23 @@ hr {
 
     z-index: 2;
 
-    padding: 10px 15px 10px 10px;
+    padding: 5px 18px 5px 0px;
     border: 2px solid var(--b);
 }
 
 .stats {
     width: 275px;
-    height: 80px;
+    height: 90px;
 
     position: absolute;
-    right: 50px;
+    left: 60px;
 
     padding: 22px 20px 50px 80px;
 
     background-color: var(--bg);
     border: 2px solid var(--b);
+
+    transition-duration: 0.25s;
 
     z-index: 2;
 }
@@ -192,8 +197,8 @@ hr {
     font-size: 17px;
 }
 
-.snowdrop {
-    top: 260px;
+#snowdrop {
+    top: 240px;
     transform: scale(1.1);
 }
 
@@ -201,8 +206,55 @@ hr {
     background: url(img/heads.png) 0px 0px / cover;
 }
 
-.snowbell {
-    top: 360px;
+#snowbell {
+    top: 350px;
+}
+
+.status-effects {
+    width: 112px;
+    height: 25px;
+
+    position: absolute;
+    top: 55px;
+
+    display: inline-flex;
+
+
+}
+
+.status-effect {
+    width: 27px;
+    height: 25px;
+
+    display: flex;
+    margin : 0px 1px;
+
+    background: url(img/stati.png) 0 0;
+    background-size: cover;
+}
+
+.tooltip span {
+    position: absolute;
+
+    display: none;
+
+    /* customizable */
+    transition: all 0.15s ease;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px var(--c);
+    width: 200px;
+
+    background-color: white;
+
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.tooltip:hover span {
+    display: block;
+
+
 }
 
 .snowbell-img {
@@ -239,10 +291,11 @@ hr {
 #side-text {
     position: absolute;
     bottom: 130px;
-    left: 40px;
+    right: 35px;
 
     line-height: 1.15;
     font-style: italic;
+    text-align: right;
 }
 
 #textbox {
@@ -307,6 +360,8 @@ hr {
 
     background-image: url(img/vegetable-stand.png);
     background-size: contain;
+
+    z-index: 1;
 }
 
 #merchant {
@@ -314,10 +369,12 @@ hr {
     height: 250px;
 
     position: absolute;
-    top: 150px;
-    left: 265px;
+    top: 160px;
+    left: 420px;
 
     background: url(img/merchants.png) 0px 0px / cover;
+
+    z-index: 2;
 }
 
 

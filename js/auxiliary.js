@@ -6,6 +6,9 @@ function typeText(str, i = 0) {
     let speed = 8;
     const textbox = document.getElementById('textbox');
 
+    if (!i)
+        textbox.innerHTML = '';
+
     let c = str.charAt(i);
 
     // Parse line breaks
