@@ -49,7 +49,7 @@ var snowdrop = {
                 return;
             }
 
-            let dmg = 0.9 * active.morale;
+            let dmg = Math.floor(active.morale * 0.9);
             const variance = randomNum(0, 5);
 
             dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
@@ -74,7 +74,7 @@ var snowdrop = {
             // Increase crit
             active.crit += 0.05;
 
-            let dmg = active.scale * active.morale;
+            let dmg = Math.floor(active.morale * active.scale);
             const variance = randomNum(0, 5);
             dmg = (Math.random() < .5 && dmg > 15) ? dmg - variance : dmg + variance;
             const str = `${active.name}'s critical rate increased.`
@@ -137,7 +137,13 @@ var snowbell = {
         cost: 0,
         use: function() {
 
-            const chance = (0.02 * (active.sp + 2) ** 2) + 0.005;
+            const chance = (0.02 * (active.sp + 2) ** 2) + 0.015;
+            // 1: 0.195
+            // 2: 0.335
+            // 3: 0.515
+            // 4: 0.735
+            // 5: 0.995
+
             const turns = 3;
 
             const prev = active.sp;
@@ -149,7 +155,7 @@ var snowbell = {
 
                 if (prev === 5) {
                     document.getElementById('side-text').style.display = 'block';
-                    document.getElementById('side-text').innerHTML = `<h4>(Missing on 5 SP has about a 0.5% chance of happening. Damn.)</h4>`;
+                    document.getElementById('side-text').innerHTML = `<h4>(Missing had about a 0.5% chance of happening. Damn.)</h4>`;
                 }
 
                 updateDmg(0, false, this.name);
@@ -170,9 +176,6 @@ var active = snowdrop;
 
 
 function haggle() {
-
-    const textbox = document.getElementById('textbox');
-    textbox.innerHTML = '';
 
     toggle(0);
 
@@ -204,7 +207,9 @@ function skill(poor = 3) {
     const next = document.getElementById('next');
     next.style.display = 'block';
     next.style.transform = 'rotate(90deg)';
-    next.onclick = menu;
+
+    next.removeEventListener('click', nextHandler);
+    next.addEventListener('click', menu);
 
     sideText.innerHTML = 'Mouse over a skill to see its effects.';
 

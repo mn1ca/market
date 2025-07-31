@@ -5,10 +5,18 @@ var lulu = {
     minPrice: 5,
     scale: 0.05,
     crit: 0.1,
-    effects: [0, 0, 0, 0],
+    effects: [0, 0, 0, 0, 0],
 
-    move1: function() {
-        console.log('move');
+    move0: {
+        name: 'Burrow',
+        cost: 2,
+        use: function() {
+
+            typeText(`${merchant.name} used ${this.name}.\n${merchant.name} was silenced. ${merchant.name}'s morale and defense increased.`);
+
+            return;
+
+        }
     },
 };
 
@@ -16,8 +24,29 @@ var merchant = lulu;
 
 // Move to opening battle window later
 
+function merchantTurn() {
+    toggle(0);
+    animateMove();
+     merchant['move0'].use();
+
+
+    const next = document.getElementById('next');
+    const textbox = document.getElementById('textbox');
+    textbox.removeEventListener('click', nextHandler);
+    textbox.removeAttribute('onclick');
+
+    next.onclick = () => {console.log('hi');};
+    textbox.onclick = () => {console.log('hey');};
+
+
+
+    return;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     menu(0);
+
+    document.getElementById('next').addEventListener('click', nextHandler);
 
     renderDisplay('stand');
     renderDisplay('merchant');
@@ -62,4 +91,19 @@ function renderDisplay(name) {
     const display = document.createElement('div');
     display.id = name;
     document.getElementById('display').append(display);
+}
+
+
+function animateMove() {
+    const merchant = document.getElementById('merchant');
+    const transformY = 40;
+
+    merchant.style.transform = `translateY(-${transformY}px)`;
+
+    merchant.style.transitionProperty = 'all';
+    merchant.style.transitionDuration = '0.5s';
+
+    setTimeout( () => { merchant.style.transform = 'translateY(0px)'; }, 150);
+
+    return;
 }

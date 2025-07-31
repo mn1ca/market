@@ -34,6 +34,7 @@ function typeText(str, i = 0) {
         setTimeout(() => ( typeText(str, i + 1) ), speed);
     } else {
         const next = document.getElementById('next');
+        next.addEventListener('click', nextHandler);
         next.style.display = 'block';
 
         textbox.addEventListener('click', nextHandler);

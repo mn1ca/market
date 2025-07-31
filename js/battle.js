@@ -13,13 +13,19 @@ var statusEffects = [
     {
         name: 'Rallied',
         desc: 'Morale increases slightly per turn',
-        bg: `url(img/stati.png) ${width * 2}px 0 / cover`,
+        bg: `url(img/stati.png) -${width * 2}px 0 / cover`,
     },
     {
         name: 'Defending',
         desc: 'Takes reduced damage to morale',
-        bg: `url(img/stati.png) ${width}px 0 / cover`,
+        bg: `url(img/stati.png) -${width * 3}px 0 / cover`,
     },
+    {
+        name: 'Powered Up',
+        desc: 'Attacks hit twice',
+        bg: `url(img/stati.png) -${width * 4}px 0 / cover`,
+
+    }
 ]
 
 var turns = 5;
@@ -34,7 +40,7 @@ function toggle(mode) {
 
     next.style.display = 'none';
     next.style.transform = 'rotate(0deg)';
-    next.onclick = nextHandler;
+    next.addEventListener('click', nextHandler);
 
     if (!mode) {
         side.style.display = 'none';
@@ -50,11 +56,33 @@ function toggle(mode) {
 function nextHandler() {
 
     //temporary for testing
-    console.log(document.getElementById(active.name));
+    /* console.log(document.getElementById(active.name));
     document.getElementById(active.name).style.transform = 'scale(1)';
 
     active = (active === snowdrop) ? snowbell : snowdrop;
-    document.getElementById(active.name).style.transform = 'scale(1.1)';
+    document.getElementById(active.name).style.transform = 'scale(1.1)';*/
+
+    textbox.removeEventListener('click', nextHandler);
+
+    // Hand off to Snowbell
+    if (active === snowdrop) {
+        document.getElementById(active.name).style.transform = 'scale(1)';
+        active = snowbell;
+        document.getElementById(active.name).style.transform = 'scale(1.1)';
+        menu();
+
+    // Hand off to merchant
+    } else if (active === snowbell) {
+        document.getElementById(active.name).style.transform = 'scale(1)';
+        active = merchant;
+        merchantTurn();
+        return;
+
+    } else {
+        active = snowdrop;
+        document.getElementById(active.name).style.transform = 'scale(1.1)';
+        menu();
+    }
 
     // Clear out expired status effects
     for (let i = 0; i < statusEffects.length; i++) {
@@ -67,16 +95,6 @@ function nextHandler() {
                 document.getElementById(`${active.name}-turns-${i}`).innerHTML = active.effects[i];
         }
     }
-
-    menu();
-
-    /*if (active === snowdrop) {
-        active = snowbell;
-        menu();
-    } else {
-        console.log('opp turn');
-        menu();
-    }*/
 
     return;
 }
@@ -97,7 +115,6 @@ function menu(i = 1) {
 
     sideText.innerHTML = 'Select a command.';
     textbox.innerHTML = menu;
-    textbox.removeEventListener('click', nextHandler);
     toggle(1);
 
 }
@@ -151,6 +168,7 @@ function updateDmg(dmg, price, move, bonus = '') {
 
     let crit = '';
     console.log(active)
+
     // Crit
     if (Math.random() < active.crit) {
         dmg = Math.floor(dmg * 1.5);
