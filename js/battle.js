@@ -4,16 +4,59 @@ var statusEffects = [
         name: 'Silenced',
         desc: 'Unable to take any actions',
         bg: `url(img/stati.png) 0 0 / cover`,
+        use: function() {
+            if (active.effects[0]) {
+
+                const plural = (active.effects[0] === 2) ? '' : 's';
+                updateText(`${active.name} is silenced. ${active.effects[0] - 1} turn${plural} remaining.`);
+
+                return 1;
+            }
+            return;
+        },
     },
     {
         name: 'Unmotivated',
         desc: 'Morale decreases slightly per turn',
         bg: `url(img/stati.png) -${width}px 0 / cover`,
+        use: function() {
+            if (active.effects[1]) {
+
+                const plural = (active.effects[1] === 2) ? '' : 's';
+                return `1${active.name} is unmotivated! They lost a little morale.\n ${active.effects[1] - 1} turn${plural} remaining.`;
+            }
+            return;
+        },
+
+        effect: function() {
+            const dmg = randomNum(5, 10);
+            active.morale -= dmg;
+
+            const target = (active === merchant) ? '' : `${active.name}-`;
+            animateCount(`${target}morale`, dmg * -1);
+        },
+
     },
     {
-        name: 'Rallied',
+        name: 'Rallying',
         desc: 'Morale increases slightly per turn',
         bg: `url(img/stati.png) -${width * 2}px 0 / cover`,
+        use: function() {
+            if (active.effects[2]) {
+
+                const plural = (active.effects[2] === 2) ? '' : 's';
+                return `2${active.name} is rallying! They gained a little morale.\n ${active.effects[2] - 1} turn${plural} remaining.`;
+            }
+            return;
+        },
+
+        effect: function() {
+            const heal = randomNum(8, 20);
+            active.morale += heal;
+
+            const target = (active === merchant) ? '' : `${active.name}-`;
+            animateCount(`${target}morale`, heal);
+        },
     },
     {
         name: 'Defending',
@@ -54,14 +97,6 @@ function toggle(mode) {
 
 // Handler for clicking next button
 function nextHandler() {
-
-    //temporary for testing
-    /* console.log(document.getElementById(active.name));
-    document.getElementById(active.name).style.transform = 'scale(1)';
-
-    active = (active === snowdrop) ? snowbell : snowdrop;
-    document.getElementById(active.name).style.transform = 'scale(1.1)';*/
-
     textbox.removeEventListener('click', nextHandler);
 
     // Hand off to Snowbell
@@ -69,33 +104,43 @@ function nextHandler() {
         document.getElementById(active.name).style.transform = 'scale(1)';
         active = snowbell;
         document.getElementById(active.name).style.transform = 'scale(1.1)';
-        menu();
+        handoff();
 
     // Hand off to merchant
     } else if (active === snowbell) {
         document.getElementById(active.name).style.transform = 'scale(1)';
         active = merchant;
         merchantTurn();
-        return;
 
     } else {
+        turns++;
+        document.getElementById('turn').innerHTML = turns;
+
         active = snowdrop;
         document.getElementById(active.name).style.transform = 'scale(1.1)';
-        menu();
+        handoff();
     }
 
     // Clear out expired status effects
-    for (let i = 0; i < statusEffects.length; i++) {
+    const divName = (active === merchant) ? 'merchant' : active.name;
+    for (let i = 0; i < active.effects.length; i++) {
         if (active.effects[i]) {
             active.effects[i]--;
 
             if (!active.effects[i])
-                document.getElementById(`${active.name}-effect-${i}`).remove();
+                document.getElementById(`${divName}-effect-${i}`).remove();
             else
-                document.getElementById(`${active.name}-turns-${i}`).innerHTML = active.effects[i];
+                document.getElementById(`${divName}-turns-${i}`).innerHTML = active.effects[i];
         }
     }
+    return;
+}
 
+
+function handoff() {
+   if (statusEffects[0].use()) return;
+
+    menu();
     return;
 }
 
@@ -157,8 +202,56 @@ function addStatusEffect(i, turns, character = active) {
 }
 
 
+async function updateText(str) {
+    const textbox = document.getElementById('textbox');
+    const next = document.getElementById('next');
+
+    let messages = [str];
+
+    let s = statusEffects[1].use();
+    if (s) messages.push(s);
+
+    s = statusEffects[2].use();
+    if (s) messages.push(s);
+
+    let index = 0;
+    async function showNextMessage() {
+        if (index < messages.length) {
+            next.removeEventListener('click', showNextMessage);
+            textbox.removeEventListener('click', showNextMessage);
+
+            // If message begins with number (status effect)
+            if (/^\d/.test(messages[index])) {
+
+                const effect = messages[index].substr(0, 1);
+                statusEffects[effect].effect();
+
+                await typeText(messages[index].substr(1), textbox);
+
+            } else {
+                await typeText(messages[index], textbox);
+            }
+
+            index++;
+
+            next.addEventListener('click', showNextMessage);
+            textbox.addEventListener('click', showNextMessage);
+            next.style.display = 'block';
+
+        } else {
+            next.removeEventListener('click', showNextMessage);
+            textbox.removeEventListener('click', showNextMessage);
+
+            next.addEventListener('click', nextHandler);
+            textbox.addEventListener('click', nextHandler);
+        }
+    }
+    showNextMessage(); // Start the first message
+}
+
+
 // Calculate player damage to merchant based on stats
-function updateDmg(dmg, price, move, bonus = '') {
+function updateDmg(dmg, price, move, add = '') {
 
     if (!dmg) {
         const str = `${active.name} used ${move}.\nHowever, ${merchant.name} was unaffected.`;
@@ -192,7 +285,7 @@ function updateDmg(dmg, price, move, bonus = '') {
     animateCount('morale', dmg * -1);
     animateCount('price', priceDmg * -1);
 
-    let str = `${active.name} used ${move}. ${bonus}\n${merchant.name}'s morale received ${dmg} ${crit} damage.`
+    let str = `${active.name} used ${move}. ${add}\n${merchant.name}'s morale received ${dmg} ${crit} damage.`
 
     if (priceDmg)
         str += ` The price fell by ${priceDmg} ⨷.`;

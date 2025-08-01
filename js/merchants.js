@@ -27,19 +27,18 @@ var merchant = lulu;
 function merchantTurn() {
     toggle(0);
     animateMove();
+
+    if (statusEffects[0].use()) return;
+
+
      merchant['move0'].use();
 
-
+    /*
     const next = document.getElementById('next');
     const textbox = document.getElementById('textbox');
     textbox.removeEventListener('click', nextHandler);
     textbox.removeAttribute('onclick');
-
-    next.onclick = () => {console.log('hi');};
-    textbox.onclick = () => {console.log('hey');};
-
-
-
+*/
     return;
 }
 

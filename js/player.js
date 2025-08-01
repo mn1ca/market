@@ -6,7 +6,7 @@ var snowdrop = {
     crit: 0.15,
     acc: 0.9,
     dodge: 0.05,
-    effects: [0, 0, 0, 0],
+    effects: [0, 2, 1, 0],
 
     move0: {
         name: 'Tongue Twister',

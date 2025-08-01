@@ -12,15 +12,14 @@ function typeText(str, textbox) {
             let speed = speedDefault;
             let c = str.charAt(i);
 
-            if (c === '\n') {
-                textbox.innerHTML += '<br>';
-            } else if (c === `'`) {
-                c = `’`;
-                textbox.innerHTML += c;
-            } else {
-                if (c === '.') speed = 120;
-                textbox.innerHTML += c;
-            }
+            if (c === '\n') textbox.innerHTML += '<br>';
+
+            else if (c === `'`) c = `’`;
+
+            // Longer pause at sentence stops
+            else if (c === '.') speed = 120;
+
+            textbox.innerHTML += c;
 
             // Play audio every 8th character
             if (!(i % 8)) {
@@ -39,42 +38,6 @@ function typeText(str, textbox) {
     });
 }
 
-async function updateText(str) {
-    const textbox = document.getElementById('textbox');
-    const next = document.getElementById('next');
-
-    let messages = [str];
-
-    for (let i = 0; i < active.effects.length; i++) {
-        if (active.effects[i]) {
-            messages.push('hi');
-        }
-    }
-
-    let index = 0;
-    async function showNextMessage() {
-        if (index < messages.length) {
-            next.removeEventListener('click', showNextMessage);
-            textbox.removeEventListener('click', showNextMessage);
-
-            await typeText(messages[index], textbox);
-            index++;
-
-            next.addEventListener('click', showNextMessage);
-            textbox.addEventListener('click', showNextMessage);
-            next.style.display = 'block';
-
-        } else {
-            next.removeEventListener('click', showNextMessage);
-            textbox.removeEventListener('click', showNextMessage);
-
-            next.addEventListener('click', nextHandler);
-            textbox.addEventListener('click', nextHandler);
-        }
-    }
-
-    showNextMessage(); // Start the first message
-}
 
 function animateCount(element, change) {
 
