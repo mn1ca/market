@@ -293,13 +293,12 @@ hr {
     background: url(img/items.png) 0px 0px / cover;
 }
 
-#turn {
+#turn-label {
     position: absolute;
     top: 175px;
     left: 715px;
 
     font-size: 20px;
-
 }
 
 #side-text {

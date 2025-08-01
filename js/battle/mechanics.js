@@ -1,77 +1,57 @@
-var width = 25;
-var statusEffects = [
-    {
-        name: 'Silenced',
-        desc: 'Unable to take any actions',
-        bg: `url(img/stati.png) 0 0 / cover`,
-        use: function() {
-            if (active.effects[0]) {
+var turns = 1;
 
-                const plural = (active.effects[0] === 2) ? '' : 's';
-                updateText(`${active.name} is silenced. ${active.effects[0] - 1} turn${plural} remaining.`);
+// Set to opening battle
+document.addEventListener('DOMContentLoaded', function() {
+    menu(0);
 
-                return 1;
-            }
-            return;
-        },
-    },
-    {
-        name: 'Unmotivated',
-        desc: 'Morale decreases slightly per turn',
-        bg: `url(img/stati.png) -${width}px 0 / cover`,
-        use: function() {
-            if (active.effects[1]) {
+    document.getElementById('next').addEventListener('click', nextHandler);
 
-                const plural = (active.effects[1] === 2) ? '' : 's';
-                return `1${active.name} is unmotivated! They lost a little morale.\n ${active.effects[1] - 1} turn${plural} remaining.`;
-            }
-            return;
-        },
+    renderDisplay('stand');
+    renderDisplay('merchant');
 
-        effect: function() {
-            const dmg = randomNum(5, 10);
-            active.morale -= dmg;
+    renderStats(snowdrop);
+    renderStats(snowbell);
 
-            const target = (active === merchant) ? '' : `${active.name}-`;
-            animateCount(`${target}morale`, dmg * -1);
-        },
+    document.getElementById('name').innerHTML = merchant.name;
+    document.getElementById('morale').innerHTML = merchant.morale;
+    document.getElementById('price').innerHTML = merchant.price;
 
-    },
-    {
-        name: 'Rallying',
-        desc: 'Morale increases slightly per turn',
-        bg: `url(img/stati.png) -${width * 2}px 0 / cover`,
-        use: function() {
-            if (active.effects[2]) {
+    document.getElementById('money').innerHTML = money;
 
-                const plural = (active.effects[2] === 2) ? '' : 's';
-                return `2${active.name} is rallying! They gained a little morale.\n ${active.effects[2] - 1} turn${plural} remaining.`;
-            }
-            return;
-        },
+    //let i = 1;
+    //merchant['move' + i]();
+});
 
-        effect: function() {
-            const heal = randomNum(8, 20);
-            active.morale += heal;
 
-            const target = (active === merchant) ? '' : `${active.name}-`;
-            animateCount(`${target}morale`, heal);
-        },
-    },
-    {
-        name: 'Defending',
-        desc: 'Takes reduced damage to morale',
-        bg: `url(img/stati.png) -${width * 3}px 0 / cover`,
-    },
-    {
-        name: 'Powered Up',
-        desc: 'Attacks hit twice',
-        bg: `url(img/stati.png) -${width * 4}px 0 / cover`,
+function renderStats(character) {
+    const name = character.name;
 
-    }
-]
+    const stats = document.createElement('div');
+    stats.id = name;
+    stats.classList.add('stats');
+    stats.innerHTML = `<h1>${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}</h1>
+            <div class='line'>
+                <h2>Morale</h2><span id='${name}-morale'>${character.morale}</span><span></span>
+                <h2>SP</h2><span id='${name}-sp'>${character.sp}</span>
+            </div>
+            <div class='stats-img ${name}-img'></div>`;
 
-var turns = 5;
+    const statusEffects = document.createElement('div');
+    statusEffects.classList.add('statuseffects');
+    statusEffects.id = `${name}-statuseffects`;
+    stats.append(statusEffects);
+
+    document.getElementById('stats').append(stats);
+
+    return;
+}
+
+
+function renderDisplay(name) {
+    const display = document.createElement('div');
+    display.id = name;
+    document.getElementById('display').append(display);
+}
 
 // Toggles visibility of side text / next button depending on mode
 function toggle(mode) {
@@ -112,6 +92,7 @@ function nextHandler() {
         active = merchant;
         merchantTurn();
 
+    // Complete turn; hand off to Snowdrop
     } else {
         turns++;
         document.getElementById('turn').innerHTML = turns;
@@ -137,8 +118,15 @@ function nextHandler() {
 }
 
 
+// Check if anything prevents normal turn
 function handoff() {
-   if (statusEffects[0].use()) return;
+    if (active.sp < 5) {
+        active.sp++;
+        document.getElementById(`${active.name}-sp`).innerHTML = active.sp;
+    }
+
+    // Stun
+    if (statusEffects[0].use()) return;
 
     menu();
     return;
@@ -165,46 +153,13 @@ function menu(i = 1) {
 }
 
 
-// Add status effect to character and display
-function addStatusEffect(i, turns, character = active) {
 
-    // Apply to either player characters or merchant
-    const divName = (character === merchant) ? 'merchant' : character.name;
-
-    // If effect already exists, cap out and return
-    if (character.effects[i]) {
-        character.effects[i] = Math.max(character.effects[i], turns);
-        document.getElementById(`${divName}-turns-${i}`).innerHTML = character.effects[i];
-        return;
-    }
-
-    // Apply effect to character
-    character.effects[i] = turns;
-    const current = statusEffects[i];
-
-    // Tooltip description
-    const str = `<b>${current.name}:</b><br>${current.desc}<hr><h3>Turns remaining: <h3 id='${divName}-turns-${i}'>${character.effects[i]}</h3></h3> `;
-
-    // Effect outer shell (tooltip)
-    const element = document.createElement('div');
-    element.classList.add('tooltip');
-    element.innerHTML = `<span>${str}</span>`;
-
-    // Effect inner (icon)
-    const effect = document.createElement('div');
-    element.id = `${divName}-effect-${i}`;
-    effect.classList.add('statuseffect');
-    effect.style.background = current.bg;
-    element.append(effect);
-
-    document.getElementById(`${divName}-statuseffects`).append(element);
-    return;
-}
-
-
+// Parse text and additional status effect messages
 async function updateText(str) {
     const textbox = document.getElementById('textbox');
     const next = document.getElementById('next');
+
+    textbox.innerHTML = '';
 
     let messages = [str];
 
@@ -217,6 +172,8 @@ async function updateText(str) {
     let index = 0;
     async function showNextMessage() {
         if (index < messages.length) {
+            noise();
+
             next.removeEventListener('click', showNextMessage);
             textbox.removeEventListener('click', showNextMessage);
 
@@ -301,7 +258,7 @@ function updateDmg(dmg, price, move, add = '') {
 function animateDmg() {
     const merchant = document.getElementById('merchant');
     const transformX = 20;
-    const transformY = 10;
+    const transformY = 5;
 
     merchant.style.filter = 'brightness(1.7)';
     merchant.style.transform = `translateX(${transformX}px) translateY(-${transformY}px)`;

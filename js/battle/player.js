@@ -6,11 +6,11 @@ var snowdrop = {
     crit: 0.15,
     acc: 0.9,
     dodge: 0.05,
-    effects: [0, 2, 1, 0],
+    effects: [0, 0, 0, 0],
 
     move0: {
         name: 'Tongue Twister',
-        desc: 'Increases morale. Decrease accuracy and chance of being unaffected.',
+        desc: 'Increases morale. Decrease accuracy and dodge rate.',
         cost: 2,
         use: function() {
 
@@ -27,7 +27,7 @@ var snowdrop = {
             active.acc *= 0.9;
             active.dodge *= 0.9;
 
-            updateText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and unaffectedness rate fell.`);
+            updateText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and dodge rate fell.`);
 
         }
     },
@@ -94,8 +94,7 @@ var snowbell = {
     crit: 0.2,
     acc: .75,
     dodge: .02,
-    defend: false,
-    effects: [0, 0, 0],
+    effects: [0, 0, 0, 0],
 
     move0: {
         name: 'Psych-Up!',

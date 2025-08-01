@@ -3,7 +3,7 @@
 
 function typeText(str, textbox) {
 
-    const speedDefault = 8;
+    const speedDefault = 7;
     textbox.innerHTML = '';
 
     return new Promise((resolve) => {
