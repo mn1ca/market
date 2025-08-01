@@ -1,48 +1,80 @@
 
 // Animation
 
-function typeText(str, i = 0) {
+function typeText(str, textbox) {
 
-    let speed = 8;
-    const textbox = document.getElementById('textbox');
+    const speedDefault = 8;
+    textbox.innerHTML = '';
 
-    if (!i)
-        textbox.innerHTML = '';
+    return new Promise((resolve) => {
+        function typeLoop(i) {
 
-    let c = str.charAt(i);
+            let speed = speedDefault;
+            let c = str.charAt(i);
 
-    // Parse line breaks
-    if (c === '\n') {
-        textbox.innerHTML += '<br>';
+            if (c === '\n') {
+                textbox.innerHTML += '<br>';
+            } else if (c === `'`) {
+                c = `’`;
+                textbox.innerHTML += c;
+            } else {
+                if (c === '.') speed = 120;
+                textbox.innerHTML += c;
+            }
 
-    } else if (c === `'`) {
-        c = `’`;
+            // Play audio every 8th character
+            if (!(i % 8)) {
+                const audio = new Audio('./audio/type.mp3');
+                audio.play();
+            }
 
-    // Longer pause after sentence
-    } else if (c === '.') {
-        speed = 120;
-    }
+            if (i < str.length - 1) {
+                setTimeout(() => typeLoop(i + 1), speed);
+            } else {
+                resolve(); // Resolve when done typing
+            }
+        }
 
-    textbox.innerHTML += c;
-
-    // Play audio every 8th character
-    const audio = new Audio('./audio/type.mp3');
-    if (!(i % 8)) audio.play();
-
-    if (i < str.length) {
-
-        setTimeout(() => ( typeText(str, i + 1) ), speed);
-    } else {
-        const next = document.getElementById('next');
-        next.addEventListener('click', nextHandler);
-        next.style.display = 'block';
-
-        textbox.addEventListener('click', nextHandler);
-    }
-
-    return;
+        typeLoop(0);
+    });
 }
 
+async function updateText(str) {
+    const textbox = document.getElementById('textbox');
+    const next = document.getElementById('next');
+
+    let messages = [str];
+
+    for (let i = 0; i < active.effects.length; i++) {
+        if (active.effects[i]) {
+            messages.push('hi');
+        }
+    }
+
+    let index = 0;
+    async function showNextMessage() {
+        if (index < messages.length) {
+            next.removeEventListener('click', showNextMessage);
+            textbox.removeEventListener('click', showNextMessage);
+
+            await typeText(messages[index], textbox);
+            index++;
+
+            next.addEventListener('click', showNextMessage);
+            textbox.addEventListener('click', showNextMessage);
+            next.style.display = 'block';
+
+        } else {
+            next.removeEventListener('click', showNextMessage);
+            textbox.removeEventListener('click', showNextMessage);
+
+            next.addEventListener('click', nextHandler);
+            textbox.addEventListener('click', nextHandler);
+        }
+    }
+
+    showNextMessage(); // Start the first message
+}
 
 function animateCount(element, change) {
 

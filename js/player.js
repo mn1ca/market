@@ -27,7 +27,7 @@ var snowdrop = {
             active.acc *= 0.9;
             active.dodge *= 0.9;
 
-            typeText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and unaffectedness rate fell.`);
+            updateText(`${active.name} used ${this.name}.\n${active.name}'s morale increased. ${active.name}'s accuracy and unaffectedness rate fell.`);
 
         }
     },
@@ -126,7 +126,7 @@ var snowbell = {
             }
 
             addStatusEffect(1, turns, merchant);
-            typeText(`${active.name} used ${this.name}.\n${merchant.name} was demoralized for ${turns} turns.`);
+            updateText(`${active.name} used ${this.name}.\n${merchant.name} was demoralized for ${turns} turns.`);
         }
 
     },
@@ -165,7 +165,7 @@ var snowbell = {
 
 
             addStatusEffect(0, turns, merchant);
-            typeText(`${active.name} used ${this.name}.\n${merchant.name} was silenced for ${turns} turns.`);
+            updateText(`${active.name} used ${this.name}.\n${merchant.name} was silenced for ${turns} turns.`);
 
         }
     }
@@ -262,7 +262,7 @@ function defend() {
     toggle(0);
 
     const pronoun = (active === snowdrop) ? 'her' : 'his';
-    typeText(`${active.name} covered ${pronoun} ears.`);
+    updateText(`${active.name} covered ${pronoun} ears.`);
 
     addStatusEffect(3, 1);
 

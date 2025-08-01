@@ -162,7 +162,7 @@ function updateDmg(dmg, price, move, bonus = '') {
 
     if (!dmg) {
         const str = `${active.name} used ${move}.\nHowever, ${merchant.name} was unaffected.`;
-        typeText(str);
+        updateText(str);
         return;
     }
 
@@ -197,7 +197,7 @@ function updateDmg(dmg, price, move, bonus = '') {
     if (priceDmg)
         str += ` The price fell by ${priceDmg} ⨷.`;
 
-    typeText(str);
+    updateText(str);
     animateDmg();
 
     return;

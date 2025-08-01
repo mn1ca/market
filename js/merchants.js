@@ -12,7 +12,7 @@ var lulu = {
         cost: 2,
         use: function() {
 
-            typeText(`${merchant.name} used ${this.name}.\n${merchant.name} was silenced. ${merchant.name}'s morale and defense increased.`);
+            updateText(`${merchant.name} used ${this.name}.\n${merchant.name} was silenced. ${merchant.name}'s morale and defense increased.`);
 
             return;
 
