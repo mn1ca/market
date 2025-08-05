@@ -1,4 +1,5 @@
 var turns = 1;
+var updating = false;
 
 // Set to opening battle
 document.addEventListener('DOMContentLoaded', function() {
@@ -77,7 +78,13 @@ function toggle(mode) {
 
 // Handler for clicking next button
 function nextHandler() {
-    textbox.removeEventListener('click', nextHandler);
+    if (updating) return;
+
+    const textbox = document.getElementById('textbox');
+    const next = document.getElementById('next');
+
+    //textbox.removeEventListener('click', nextHandler);
+    //next.removeEventListener('click', nextHandler);
 
     // Hand off to Snowbell
     if (active === snowdrop) {
@@ -156,18 +163,25 @@ function menu(i = 1) {
 
 // Parse text and additional status effect messages
 async function updateText(str) {
+
+    if (updating) return;
+    updating = true;
+
     const textbox = document.getElementById('textbox');
     const next = document.getElementById('next');
+
+    //textbox.removeEventListener('click', nextHandler);
+    //next.removeEventListener('click', nextHandler);
 
     textbox.innerHTML = '';
 
     let messages = [str];
 
-    let s = statusEffects[1].use();
-    if (s) messages.push(s);
 
-    s = statusEffects[2].use();
-    if (s) messages.push(s);
+    const status1 = statusEffects[1].use();
+    const status2 = statusEffects[2].use();
+    if (status1) messages.push(status1);
+    if (status2) messages.push(status2);
 
     let index = 0;
     async function showNextMessage() {
@@ -191,19 +205,26 @@ async function updateText(str) {
 
             index++;
 
-            next.addEventListener('click', showNextMessage);
-            textbox.addEventListener('click', showNextMessage);
-            next.style.display = 'block';
+            if (index < messages.length) {
+                // Attach showNextMessage listener when still showing messages
+                next.addEventListener('click', showNextMessage);
+                textbox.addEventListener('click', showNextMessage);
+                next.style.display = 'block';
 
-        } else {
-            next.removeEventListener('click', showNextMessage);
-            textbox.removeEventListener('click', showNextMessage);
+            } else {
 
-            next.addEventListener('click', nextHandler);
-            textbox.addEventListener('click', nextHandler);
+                // Attach nextHandler listener when finished
+                setTimeout(() => {
+                    next.addEventListener('click', nextHandler);
+                    textbox.addEventListener('click', nextHandler);
+                    updating = false;
+                    next.style.display = 'block';
+                }, 0);
+            }
         }
     }
-    showNextMessage(); // Start the first message
+
+    showNextMessage();
 }
 
 
