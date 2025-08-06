@@ -83,8 +83,8 @@ function nextHandler() {
     const textbox = document.getElementById('textbox');
     const next = document.getElementById('next');
 
-    //textbox.removeEventListener('click', nextHandler);
-    //next.removeEventListener('click', nextHandler);
+    textbox.removeEventListener('click', nextHandler);
+    next.removeEventListener('click', nextHandler);
 
     // Hand off to Snowbell
     if (active === snowdrop) {
